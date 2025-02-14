@@ -1,0 +1,4 @@
+-i https://pypi.doubanio.com/simple
+django==4.2.19
+celery==5.4.0
+pydantic==2.10.6
