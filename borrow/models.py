@@ -52,3 +52,10 @@ class Borrow(models.Model):
         borrow.returned_time = now()
         borrow.save()
         return {'code': 0, 'msg': '还书成功', 'data': {}}
+
+    @staticmethod
+    def expired_in_days(days: int):
+        # 快到期的借书记录
+        end_time = now() + timedelta(days=days)
+        all_records = Borrow.objects.filter(returned_time=None, end_time__lte=end_time).all()
+        return all_records

@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'user',
     'book',
     'borrow',
+    'django_celery_results',  # 显示任务结果
+    'django_celery_beat',  # 设置定时或周期性任务
 ]
 
 MIDDLEWARE = [
@@ -108,7 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -128,3 +130,22 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
 
 
+CELERY_BROKER_URL = "redis://192.168.9.15:6379/9"  # 消息中间件（Broker）使用 redis 数据库。
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_ENABLE_UTC = False
+DJANGO_CELERY_BEAT_TZ_AWARE = True
+
+# 为 django_celery_results 存储 Celery 任务执行结果设置后台
+# 格式为：格式为：db+scheme://user:password@host:port/dbname
+# 支持数据库 django-db 和缓存 django-cache 存储任务状态及结果
+CELERY_RESULT_BACKEND = "django-db"  # Celery 任务执行结果保存到 django数据库中
+
+# celery内容等消息的格式设置，默认json
+CELERY_ACCEPT_CONTENT = ['application/json', ]
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+# 为任务设置超时时间，单位秒。超时即中止，执行下个任务。
+CELERY_TASK_TIME_LIMIT = 500
+# Celery Beat 配置
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
