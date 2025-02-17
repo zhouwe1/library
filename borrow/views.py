@@ -1,12 +1,13 @@
 from django.views.decorators.csrf import csrf_exempt
 from pydantic import ValidationError
 import json
-from utils import json_response
+from utils import json_response, timer
 from .schemas import BorrowingReq, ReturningReq
 from .models import Borrow
 # Create your views here.
 
 
+@timer
 @csrf_exempt
 def borrowing(request):
     data = json.loads(request.body)
@@ -18,6 +19,7 @@ def borrowing(request):
     return json_response(**result)
 
 
+@timer
 @csrf_exempt
 def returning(request):
     data = json.loads(request.body)

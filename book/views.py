@@ -3,16 +3,18 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from pydantic import ValidationError
 import json
-from utils import json_response
+from utils import json_response, timer
 from .models import Book
 from .schemas import BookData
 # Create your views here.
+
 
 
 @method_decorator(csrf_exempt, name='dispatch')
 class BookView(View):
 
     # 查询
+    @timer
     def get(self, request):
         params = request.GET
         page = params.get('page', 1)
@@ -21,6 +23,7 @@ class BookView(View):
         return json_response(code=0, data=result)
 
     # 录入
+    @timer
     def post(self, request):
         data = json.loads(request.body)
         try:
@@ -34,6 +37,7 @@ class BookView(View):
         return json_response(code=0, msg='添加成功', data=result)
 
     # 修改
+    @timer
     def put(self, request, book_id):
         data = json.loads(request.body)
         try:
@@ -47,6 +51,7 @@ class BookView(View):
         return json_response(code=0, msg='修改成功', data=book.to_dict())
 
     # 删除
+    @timer
     def delete(self, request, book_id):
         book = Book.objects.filter(id=book_id, is_disabled=False).first()
         if not book:
